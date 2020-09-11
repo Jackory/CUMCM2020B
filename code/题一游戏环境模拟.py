@@ -9,13 +9,15 @@ class Node:
             self.neibor.append(i)
 
 class Log:
-    def __init__(self,time,pos,action,money):
+    def __init__(self,time,pos,action,money,water,food):
         self.time=time
         self.pos=pos
         self.action=action
         self.money=money
+        self.water=water
+        self.food=food
     def display(self):
-        print("Day: "+str(self.time)+" At: "+str(self.pos)+" Money: "+str(self.money)+" "+self.action)
+        print("Day: "+str(self.time)+" At: "+str(self.pos)+" Money: "+str(self.money)+" water "+str(self.water)+" food "+str(self.food)+" "+self.action)
     
 def build_map():
     fp = open("Map1.txt",'r')
@@ -93,21 +95,23 @@ def MonteCarloRobot(cur_time,cur_money,cur_water,cur_food,cur_node,last_state=0)
         return 0
     if cur_state == 'z':
         #print("get End point with Money",cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2)
-        return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
-
+        #return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
+        return cur_money
     if cur_state == 'p' or cur_state =='s':
         return Just_Go(cur_time,cur_money,cur_water,cur_food,cur_node)
 
     if cur_state == 'k':
-        ret = random.randint(0, 1)
+        ret = random.randint(0, 2)
         if ret == 0:# 不挖矿 直接离开
             return Just_Go(cur_time,cur_money,cur_water,cur_food,cur_node)
         else:
             if last_state==1:
-                temp=MonteCarloRobot(cur_time + 1, cur_money+5000, cur_water-base_consume_water[0]*3,cur_food-base_consume_food[0]*3,cur_node,1)
+                temp=MonteCarloRobot(cur_time + 1, cur_money+1000, cur_water-base_consume_water[0]*3,cur_food-base_consume_food[0]*3,cur_node,1)
             else:
                 temp=MonteCarloRobot(cur_time + 1, cur_money, cur_water-base_consume_water[0],cur_food-base_consume_food[0],cur_node,1)
-
+            #if temp!=0:
+                #print("Hit herre")
+                #print(temp)
             return temp
 
     if cur_state == 'c':
@@ -153,9 +157,13 @@ def monte_move(cur_time,cur_money,cur_water,cur_food,cur_node,try_time):
 
     for i in neigh:
         Money_sum = 0
+        real=1
         for _ in range(try_time):
-            Money_sum += MonteCarloRobot(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2,cur_food - base_consume_food[0] * 2, i)
-        Money_sum/=try_time
+            tempmoney= MonteCarloRobot(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2,cur_food - base_consume_food[0] * 2, i)
+            Money_sum+=tempmoney
+            if tempmoney!=0:
+                real+=1
+        Money_sum/=real
         if Money_sum>best_score:
             best_choice=i
             best_score=Money_sum
@@ -164,51 +172,56 @@ def monte_move(cur_time,cur_money,cur_water,cur_food,cur_node,try_time):
 
 def monte_dig(cur_time,cur_money,cur_water,cur_food,cur_node,try_time):
     Money_sum = 0
+    real=1
     for _ in range(try_time):
-        Money_sum  += MonteCarloRobot(cur_time + 2, cur_money+5000, cur_water-base_consume_water[0]*3,cur_food-base_consume_food[0]*3,cur_node)
-    Money_sum /= Try_time
+        temp  = MonteCarloRobot(cur_time + 1, cur_money+1000, cur_water-base_consume_water[0]*3,cur_food-base_consume_food[0]*3,cur_node)
+        if temp!=0:
+            real+=1
+        Money_sum+=temp
+    Money_sum /= real
     return -1,Money_sum
 
 def Try_Decide(cur_time,cur_money,cur_water,cur_food,cur_node,Log_list):
     print("I am in site "+str(cur_node))
-    Try_time=2000
+    Try_time=50000
     cur_state = Map[cur_node - 1].state
     if cur_water < 0 or cur_food < 0:
-        temp=Log(cur_time,cur_pos,"Dead",cur_money)
+        temp=Log(cur_time,cur_node,"Dead",cur_money,cur_water,cur_food)
         Log_list.append(temp)
         return 0
     if cur_time >= 30:
-        temp=Log(cur_time,cur_pos,"Timeout",cur_money)
+        temp=Log(cur_time,cur_node,"Timeout",cur_money,cur_water,cur_food)
         Log_list.append(temp)
         return 0
 
     if cur_state == 'z':
-        temp=Log(cur_time,cur_node,"Reach",cur_money + cur_food * base_food_price / 2 + cur_water * base_water_price / 2)
+        temp=Log(cur_time,cur_node,"Reach",cur_money + cur_food * base_food_price / 2 + cur_water * base_water_price / 2,cur_water,cur_food)
         Log_list.append(temp)
         return cur_money + cur_food * base_food_price / 2 + cur_water * base_water_price / 2
 
     if cur_state == 'p' or cur_state =='s':
         best_choice,best_score=monte_move(cur_time,cur_money,cur_water,cur_food,cur_node,Try_time)
-        temp=Log(cur_time,cur_node,"Move"+str(best_choice),cur_money)
+        temp=Log(cur_time,cur_node,"Move"+str(best_choice),cur_money,cur_water,cur_food)
         Log_list.append(temp)
         return Try_Decide(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2,cur_food - base_consume_food[0] * 2, best_choice,Log_list)
 
     if cur_state == 'k':
         best_choice,best_score = monte_move(cur_time,cur_money,cur_water,cur_food,cur_node,Try_time)
-        _,dig_score = monte_move(cur_time,cur_money,cur_water,cur_food,cur_node,Try_time)
+        _,dig_score = monte_dig(cur_time,cur_money,cur_water,cur_food,cur_node,Try_time)
+        print("Stay And Dig",dig_score)
         if dig_score>best_score:
             best_choice=-1
             best_score=dig_score
 
         if best_choice==-1:
-            temp=Log(cur_time,cur_node,"Dig",cur_money)
+            temp=Log(cur_time,cur_node,"Dig",cur_money,cur_water,cur_food)
             Log_list.append(temp)
-            if Log_list[-2].action=="Dig":
-                return Try_Decide(cur_time + 1, cur_money+5000, cur_water-base_consume_water[0]*4,cur_food-base_consume_food[0]*4,cur_node,Log_list)
+            if len(Log_list)>2 and Log_list[-2].action=="Dig":
+                return Try_Decide(cur_time + 1, cur_money+1000, cur_water-base_consume_water[0]*4,cur_food-base_consume_food[0]*4,cur_node,Log_list)
             else:
-                return Try_Decide(cur_time + 2, cur_money+5000, cur_water-base_consume_water[0]*4,cur_food-base_consume_food[0]*4,cur_node,Log_list)
+                return Try_Decide(cur_time + 2, cur_money+1000, cur_water-base_consume_water[0]*4,cur_food-base_consume_food[0]*4,cur_node,Log_list)
         else:
-            temp=Log(cur_time,cur_node,"Move"+str(best_choice),cur_money)
+            temp=Log(cur_time,cur_node,"Move"+str(best_choice),cur_money,cur_water,cur_food)
             Log_list.append(temp)
             return Try_Decide(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2, cur_food - base_consume_food[0] * 2, best_choice,Log_list)
 
@@ -224,8 +237,8 @@ def Try_Decide(cur_time,cur_money,cur_water,cur_food,cur_node,Log_list):
         food_can_buy = min(food_can_afford, food_can_take)
         best_choice=[0,0]
         best_score=0
-        for i in range(water_can_buy):
-            for j in range(food_can_buy):
+        for i in range(int(water_can_buy)):
+            for j in range(int(food_can_buy)):
                 Money_sum=0
                 if check(i,j,can_take,cur_money):
                     use_money=(i * 2 * base_water_price + j * 2 * base_food_price)
@@ -241,11 +254,11 @@ def Try_Decide(cur_time,cur_money,cur_water,cur_food,cur_node,Log_list):
         cur_money-=use_money
         cur_water +=  best_choice[0]
         cur_food += best_choice[1]
-        temp=Log(cur_time,cur_pos,"Buy",cur_money)
+        temp=Log(cur_time,cur_node,"Buy",cur_money,cur_water,cur_food)
         Log_list.append(temp)
     
         best_choice,best_score=monte_move(cur_time,cur_money,cur_water,cur_food,cur_node,Try_time)
-        temp=Log(cur_time,cur_pos,"Move"+str(best_choice),cur_money)
+        temp=Log(cur_time,cur_pos,"Move"+str(best_choice),cur_money,cur_water,cur_food)
         Log_list.append(temp)
         return Try_Decide(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2 ,cur_food - base_consume_food[0] * 2, best_choice)
 
@@ -270,7 +283,7 @@ def RunGame():
 
     rest_money=init_money-(base_food_price*f+base_water_price*w)
     if rest_money>=0:
-        Try_Decide(0,rest_money,w,f,24,best_decide)
+        Try_Decide(0,rest_money,w,f,1,best_decide)
     for i in best_decide:
         i.display()
 
