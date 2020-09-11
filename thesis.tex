@@ -161,7 +161,7 @@ W_t=W_{t-1}-\triangle W_t+Shop_tShopW_t
 \end{equation}
 即每天结束时的水量等于前一天的水量减去当天的水消耗量再加上在村庄购买的水量（如果购买的话）。\\\\
 \begin{equation}
-P_{t}=P_{t-1}(1-Move_t)+\bar{P_{t-1}}Move_t
+P_{t}=P_{t-1}(1-Move_t)+\bar{P}_{t-1}Move_t
 \end{equation}
 其中$P_t$表示第t天的位置，$\bar{P_t}$表示第t+1天可以到达的几个相邻区域之一，
 $$Move_t=\begin{cases}
@@ -196,15 +196,15 @@ $$L(x)=\sum_{i=1}^nf(x_i)\displaystyle\frac{\Pi_{j\neq i}(x-x_j)}{\Pi_{j\neq i}(
 
 
 
+\subsection{问题一的分析与求解}
+可以看出，问题一的核心关键在于玩家是否前往矿山挖矿、在矿山连续挖几天矿、在挖矿之后是否需要前往村庄补给物资以及是否可以在矿山和村庄之间往返。我们将问题作如下简化：
 
-可以看出，问题一的核心关键在于玩家是否前往矿山挖矿、在挖矿之后是否需要前往村庄补给物资以及是否可以在矿山和村庄之间往返。我们将问题作如下简化：
-
-选取图中起点、终点、村庄和矿山作为特殊点，利用Dijkstra算法计算出每两个特殊点之间的最短路径（即不考虑沙暴天气的影响下，所需最少的天数），如图\ref{fig:simpleexample}：
+选取图中起点、终点、村庄和矿山作为特殊点，利用Dijkstra算法计算出每两个特殊点之间的最短路径（即不考虑沙暴天气的影响下，所需最少的天数），如图\ref{fig:map1}：
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=\textwidth]{figures/simpleexample.jpg}
+	\includegraphics[scale=0.6]{figures/map1.jpg}
 	\caption{简化后的Map1}
-	\label{fig:simpleexample}
+	\label{fig:map1}
 \end{figure}
 该图是一个完全图（即图中每两点之间都有一条边），且每条边上的数字代表着两个特殊点之间的最短路径（受天气影响可能会有变化）。其中：$P_0$代表起点，$P_1$代表村庄，$P_2$代表矿山，$P_3$代表终点。对于问题一，因为天气是预先给定的，整局游戏没有随机因素，所以我们假定玩家在游戏途中始终向着某个特殊点（终点、村庄、矿山）前进并且选择最合适的路径，而非漫无目的地随机移动，即游戏旅程由几条有向线段叠加而成：
 \begin{equation}
@@ -215,21 +215,7 @@ $$L(x)=\sum_{i=1}^nf(x_i)\displaystyle\frac{\Pi_{j\neq i}(x-x_j)}{\Pi_{j\neq i}(
 %参考文献
 \begin{thebibliography}{9}%宽度9
 
-    \bibitem[1]{reference1}
-    Xia W, Sanyi T, Yong C, et al.
-    \newblock  When will be the resumption of work in Wuhan and its surrounding areas during COVID-19 epidemic? A data-driven network modeling analysis[J]. SCIENTIA SINICA Mathematica, 2020.
-
-    \bibitem[2]{reference2}
-    曹盛力, 冯沛华, 时朋朋. 
-    \newblock 修正 SEIR 传染病动力学模型应用于湖北省 2019 冠状病毒病 (COVID-19) 疫情预测和评估[J]. 浙江大学学报 (医学版), 2020, 49(1): 0-0.
-
-    \bibitem[3]{reference3}
-    Lakdawalla D, Keeler E, Goldman D, et al. 
-    \newblock Getting Americans back to work (and school) with pooled testing[J]. USC Schaeffer Center White Paper, 2020.
     
-    \bibitem[4]{reference4}
-    Sarkar K, Khajanchi S, Nieto J J. 
-    \newblock Modeling and forecasting the COVID-19 pandemic in India[J]. Chaos, Solitons \& Fractals, 2020: 110049.
 
 \end{thebibliography}
 
