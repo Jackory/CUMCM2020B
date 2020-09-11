@@ -16,6 +16,7 @@ class Log:
         self.money=money
         self.water=water
         self.food=food
+        
     def display(self):
         print("Day: "+str(self.time)+" At: "+str(self.pos)+" Money: "+str(self.money)+" water "+str(self.water)+" food "+str(self.food)+" "+self.action)
     
