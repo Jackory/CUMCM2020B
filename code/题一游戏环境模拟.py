@@ -124,8 +124,8 @@ from Draw import Draw
 Decide_List=[]
 
 def Try_Decide(cur_time,cur_money,cur_water,cur_food,cur_node):
-    print("I am in site "+str(cur_node))
-    Try_time=10000
+    #print("I am in site "+str(cur_node))
+    Try_time=1000
     cur_state = Map[cur_node - 1].state
     if cur_water < 0 or cur_food < 0:
         Decide_List.append("No food or water And Dead")
@@ -149,7 +149,7 @@ def Try_Decide(cur_time,cur_money,cur_water,cur_food,cur_node):
             if Money_sum>best_score:
                 best_choice=i
                 best_score=Money_sum
-            print("i am in "+str(cur_node)+"money  "+str(Money_sum)+"  to "+str(i)+" money "+str(cur_money))
+            #print("i am in "+str(cur_node)+"money  "+str(Money_sum)+"  to "+str(i)+" money "+str(cur_money))
         Decide_List.append("from"+str(cur_node)+"to"+str(best_choice))
         return Try_Decide(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2,cur_food - base_consume_food[0] * 2, best_choice)
     if cur_state == 'k':
@@ -235,8 +235,22 @@ def RunGame():
     #     money_list.append(Money_sum/(i+1))
     # Draw([money_list], ["测试"], range(len(money_list)), "蒙特卡罗模拟沙漠穿越")
     # print("Average Money",Money_sum/try_time)
-    Try_Decide(0,2000,800,400,1)
-    print(Decide_List)
+    best_decide=[]
+    max_money=-1
+    for i in range(50):
+        for j in range(50):
+            w=i*20
+            f=j*10
+            print(i,j,max_money)
+            Decide_List.clear()
+            rest_money=init_money-base_food_price*f+base_water_price*w
+            if rest_money>=0:
+                temp=Try_Decide(0,rest_money,w,f,1)
+                if temp>max_money:
+                    best_decide=Decide_List
+                    max_money=temp
+
+    print(best_decide)
 
 build_map()
 RunGame()
