@@ -32,7 +32,7 @@ weather=["高温","高温","晴朗","沙暴","晴朗",
          "晴朗","晴朗","高温","晴朗","沙暴",
          "高温","晴朗","晴朗","高温","高温"
          ]
-
+print(len(weather))
 TotalTake=1200
 init_money=10000
 base_water_price=5
@@ -53,8 +53,25 @@ def check(i,j,can_take,canafford):
     else:
         return True
 
-def MonteCarloRobot(cur_time,cur_money,cur_water,cur_food,cur_node):
+# 这个函数作为一个机器人已经决定要从当前位置移动到下一个位置的决策过程
+def Just_Go(cur_time,cur_money,cur_water,cur_food,cur_node):
+    if cur_time>=30:
+        return 0
+    if weather[cur_time] == "沙暴":
+        return MonteCarloRobot(cur_time + 1, cur_money, cur_water - base_consume_water[2],cur_food - base_consume_food[2], cur_node)
+    if weather[cur_time] == "高温":
+        neigh = Map[cur_node - 1].neibor
+        ret = random.randint(0, len(neigh) - 1)
+        return MonteCarloRobot(cur_time + 1, cur_money, cur_water - base_consume_water[1] * 2,cur_food - base_consume_food[1] * 2, neigh[ret])
+    if weather[cur_time] == "晴朗":
+        neigh = Map[cur_node - 1].neibor
+        ret = random.randint(0, len(neigh) - 1)
+        return MonteCarloRobot(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2, cur_food - base_consume_food[0] * 2, neigh[ret])
+    else:
+        print("Hit Error !!!!!!!!!!!!!!!!!!")
+        return
 
+def MonteCarloRobot(cur_time,cur_money,cur_water,cur_food,cur_node):
     cur_state=Map[cur_node-1].state
     if cur_water<0 or cur_food <0 :
         #print("No food or water And Dead")
@@ -67,20 +84,16 @@ def MonteCarloRobot(cur_time,cur_money,cur_water,cur_food,cur_node):
         return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
 
     if cur_state == 'p' or 's':
+        return Just_Go(cur_time,cur_money,cur_water,cur_food,cur_node)
 
-        neigh=Map[cur_node-1].neibor
-        ret = random.randint(0, len(neigh)-1)
-        return MonteCarloRobot(cur_time+1,cur_money,cur_water-base_consume_water[0]*2,cur_food-base_consume_food[0]*2,neigh[ret])
     if cur_state == 'k':
         ret = random.randint(0, 1)
         if ret == 0:# 不挖矿 直接离开
-
-            neigh = Map[cur_node-1].neibor
-            ret = random.randint(0, len(neigh) - 1)
-            return MonteCarloRobot(cur_time+1,cur_money,cur_water-base_consume_water[0]*2,cur_food-base_consume_food[0]*2,neigh[ret])
+            return Just_Go(cur_time,cur_money,cur_water,cur_food,cur_node)
         else:
             print("挖到矿了！！！！！！！！！！！！！！！！！！！！！！！")
             return MonteCarloRobot(cur_time + 2, cur_money+1000, cur_water-base_consume_water[0]*3,cur_food-base_consume_food[0]*3,cur_node)
+
     if cur_state == 'c':
         cur_take=cur_water*base_water_weight+cur_food*base_food_weight
         can_take= TotalTake-cur_take
@@ -98,15 +111,11 @@ def MonteCarloRobot(cur_time,cur_money,cur_water,cur_food,cur_node):
         use_weight=(random_water*base_water_weight+random_food*base_food_weight)
 
         if use_money>cur_money or use_weight>can_take:
-
-            neigh = Map[cur_node-1].neibor
-            ret = random.randint(0, len(neigh) - 1)
-            return MonteCarloRobot(cur_time+1,cur_money,cur_water-base_consume_water[0]*2,cur_food-base_consume_food[0]*2,neigh[ret])
+            return Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node)
         else:
+            # 带着新买的物资走
+            return Just_Go(cur_time,cur_money-use_money,cur_water+random_water,cur_food+random_food,cur_node)
 
-            neigh = Map[cur_node-1].neibor
-            ret = random.randint(0, len(neigh) - 1)
-            return MonteCarloRobot(cur_time + 1, cur_money-use_money, cur_water+random_water-base_consume_water[0]*2, cur_food+random_food-base_consume_food[0]*2, neigh[ret])
 
 
 
@@ -121,7 +130,7 @@ def Try_Decide(cur_time,cur_money,cur_water,cur_food,cur_node):
     if cur_water < 0 or cur_food < 0:
         Decide_List.append("No food or water And Dead")
         return 0
-    if cur_time > 30:
+    if cur_time >= 30:
         Decide_List.append("Out of Time Dead")
         return 0
     if cur_state == 'z':
@@ -167,7 +176,7 @@ def Try_Decide(cur_time,cur_money,cur_water,cur_food,cur_node):
 
         if best_choice==-1:
             Decide_List.append("Dig Mine at Day " + str(cur_time)+" money "+str(cur_money))
-            return Try_Decide(cur_time + 2, cur_money+1000, cur_water-base_consume_water[0]*3,cur_food-base_consume_food[0]*3,cur_node)
+            return Try_Decide(cur_time + 2, cur_money+1000, cur_water-base_consume_water[0]*4,cur_food-base_consume_food[0]*4,cur_node)
         else:
             Decide_List.append("from" + str(cur_node) + "to" + str(best_choice)+" money "+str(cur_money))
             return Try_Decide(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2,
@@ -230,5 +239,4 @@ def RunGame():
     print(Decide_List)
 
 build_map()
-
 RunGame()
