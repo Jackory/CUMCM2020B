@@ -120,12 +120,13 @@
         $n_{hf}$ & 高温天气下食物的基准消耗量 & 箱\\
         $n_{of}$ & 沙暴天气下食物的基准消耗量 & 箱\\
         $n$ & 玩家数 & 人 \\
-        $P_{it}$ & 第t天开始时玩家i所处的位置 & / \\
-        $W_{it}$ & 第t天开始时玩家i剩余的水 & 箱 \\
-        $F_{it}$ & 第t天开始时玩家i剩余的食物 & 箱 \\ 
-        $Q_{it}$ & 第t天开始时玩家i剩余的资金 & 元 \\
-        $S_{it}$ & 第t天玩家i所处的地点特征 & /\\
+        $P_{t}$ & 第t天开始时玩家所处的位置 & / \\
+        $W_{t}$ & 第t天开始时玩家剩余的水 & 箱 \\
+        $F_{t}$ & 第t天开始时玩家剩余的食物 & 箱 \\ 
+        $Q_{t}$ & 第t天开始时玩家剩余的资金 & 元 \\
+        $S_{t}$ & 第t天玩家所处的地点特征 & /\\
         $We_t$ & 第t天的天气 & /\\
+        $Q_{Mine}$ & 基础收益 & 元\\
         
         \bottomrule[1.5pt]
     \end{tabular}
@@ -141,7 +142,7 @@
 \end{equation}
 其中$Q_{t},W_{t},F_{t}$分别表示第t天时玩家所剩下的资金、水和食物量。如果玩家在第30天前到达终点，则其各个属性将会在未来几天视作不变，所以我们以第三十天为统一结束时间。该目标函数有如下约束：\\\\
 \begin{equation}
-	Q_t=Q_{t-1}+1000Mine_t-Shop_t[10ShopF_t+20ShopW_t]
+	Q_t=Q_{t-1}+Q_{Mine}Mine_t-Shop_t[2p_fShopF_t+2p_wShopW_t]
 \end{equation}
 其中$$Mine_t=\begin{cases}
 0,\quad \text{如果第t天不挖矿}\\
@@ -153,11 +154,11 @@ $$Shop_t=\begin{cases}
 \end{cases}$$
 即每天结束时的资金等于前一天的资金加上当天挖矿获得的1000元（如果挖矿的话），再减去在村庄购买食物和水花费的钱（如果购买的话）。其中$ShopF_t$和$ShopW_t$分别表示玩家在第t天购买的食物量和水量（如果购买的话）。\\\\
 \begin{equation}
-F_t=F_{t-1}-\triangle F_t+Shop_tShopF_t
+F_t=F_{t-1}-2Move_t\triangle F_t-3Mine_tMove_t\triangle F_t-(1-Move_t-Mine_t)\triangle F_t+Shop_tShopF_t
 \end{equation}
 即每天结束时的食物量等于前一天的食物量减去当天的食物消耗量再加上在村庄购买的食物量（如果购买的话）。\\\\
 \begin{equation}
-W_t=W_{t-1}-\triangle W_t+Shop_tShopW_t
+W_t=W_{t-1}-2Move_t\triangle W_t-3Mine_t\triangle W_t-(1-Move_t-Mine_t)\triangle W_t+Shop_tShopW_t
 \end{equation}
 即每天结束时的水量等于前一天的水量减去当天的水消耗量再加上在村庄购买的水量（如果购买的话）。\\\\
 \begin{equation}
@@ -179,16 +180,16 @@ $$If_0(x)=\begin{cases}
 0,\quad if\quad x\neq0
 \end{cases}$$\\\\
 
-$\triangle F_t$和$\triangle W_t$分别表示第t天所需要消耗的食物量和水量，由Lagrange插值算法：
+$\triangle F$和$\triangle W$分别表示第t天基础消耗的食物量和水量，由Lagrange插值公式：
 $$L(x)=\sum_{i=1}^nf(x_i)\displaystyle\frac{\Pi_{j\neq i}(x-x_j)}{\Pi_{j\neq i}(x_i-x_j)}$$
 可得
 \begin{equation}
-\triangle F_t=Move_t(-5Weather_t^2+3Weather_t+14)+Mine_t(-7.5Weather_t^2+4.5Weather_t+21)
+\triangle F_t=n_{sf}\frac{Wea_t^2-3Wea_t+2}{2}+n_{hf}\frac{Wea_t^2-2Wea_t}{-1}+n_{of}\frac{Wea_t^2-Wea_t}{2}
 \end{equation}
 \begin{equation}
-\triangle W_t=Move_t(-11Weather_t^2+17Weather_t+10)+Mine_t(-16.5Weather_t^2+25.5Weather_t+15)
+\triangle W_t=n_{sw}\frac{Wea_t^2-3Wea_t+2}{2}+n_{hw}\frac{Wea_t^2-2Wea_t}{-1}+n_{ow}\frac{Wea_t^2-Wea_t}{2}
 \end{equation}
-其中$$Weather_t=\begin{cases}
+其中$$Wea_t=\begin{cases}
 0,\quad\text{晴朗天气}\\
 1,\quad\text{高温天气}\\
 2,\quad\text{沙暴天气}
