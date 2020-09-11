@@ -72,13 +72,13 @@ def possess_c(cur_water,cur_food,cur_money,cur_day,log):
     #     # cur_money-=(base_water_price * 2)*buy+(base_food_price * 2)*buy
     #     # cur_food+=buy
     #     # cur_water+=buy
-    newlog=log+"Go end "
+    newlog=log+str(cur_day)+" "+"Go end\n"
     q,w,e=go(cur_day,3)
     temp_water=cur_water-q
     temp_food=cur_food-w
     possess_z(temp_water,temp_food,cur_money,e,newlog)
 
-    newlog = log + "Go Mine "
+    newlog = log+str(cur_day)+" " + "Go Mine\n"
     q, w, e = go(cur_day, 2)
     temp_water = cur_water - q
     temp_food = cur_food - w
@@ -87,8 +87,8 @@ def possess_c(cur_water,cur_food,cur_money,cur_day,log):
 
 log_list={}
 def possess_z(cur_water,cur_food,cur_money,cur_day,log):
-    print("END",cur_water*5/2+cur_food*10/2+cur_money,cur_day)
-    log+="End"+str(cur_water*5/2+cur_food*10/2+cur_money)
+    print("END ",cur_water*5/2+cur_food*10/2+cur_money,cur_day)
+    log+="End "+str(cur_water*5/2+cur_food*10/2+cur_money)
     log_list[log]=cur_water*5/2+cur_food*10/2+cur_money
     return cur_water*5/2+cur_food*10/2+cur_money
 
@@ -106,7 +106,7 @@ def posseess_k(cur_water,cur_food,cur_money,cur_day,log):
             temp_water=temp_water-base_consume_water[get_weather(weather[cur_day+j-1])]*3
             temp_food=temp_food-base_consume_food[get_weather(weather[cur_day+j-1])]*3
             temp_day+=1
-        newlog=log+"Dig"+str(i+1)+"Day "
+        newlog=log+str(temp_day)+" "+"Dig "+str(i+1)+" Day\n"
         q,w,e=go(temp_day,5)
         if q<0:
             continue
@@ -116,19 +116,20 @@ def posseess_k(cur_water,cur_food,cur_money,cur_day,log):
         newlog+="Go end "
         possess_z(temp_water,temp_food,temp_money,e,newlog)
 
-        newlog = log + "Dig" + str(i + 1) + "Day "
+        newlog = log+str(temp_day)+" " + "Dig " + str(i + 1) + " Day\n"
         q, w, e = go(temp_day, 2)
         if q < 0:
             continue
         temp_water -= q
         temp_food -= w
         temp_money = 1000 * (i+1) + cur_money
-        newlog += "Go village "
+        newlog += "Go village\n"
         possess_c(temp_water, temp_food, temp_money, e,newlog)
 
 
 q,w,e=go(1,6)
 log=""
+
 possess_c(init_water-q,init_food-w,money,e,log)
 
 max=-1
@@ -138,3 +139,16 @@ for i in log_list:
         max=log_list[i]
         max_index=i
 print(max_index)
+
+import matplotlib.pyplot as plt
+
+index=0
+x=[]
+y=[]
+for i in log_list:
+    x.append(index)
+    index+=1
+    y.append(log_list[i])
+
+plt.scatter(x, y, alpha=0.6)
+plt.show()
