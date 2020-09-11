@@ -5,9 +5,9 @@ cost = np.array([[1,16,12,6],
     [12,4,1,6],
     [6,10,6,0]])
 
-reward = np.array([[0,0,0,0],
-         [0,1000,0,0],
-         [0,0,0,0],
+reward = np.array([[20,0,0,100],
+         [0,1000,0,100],
+         [0,0,0,100],
          [0,0,0,0]])
 
 Qtable = np.array([[0,1,0,0],
@@ -15,8 +15,8 @@ Qtable = np.array([[0,1,0,0],
          [0,0,0,0],
          [0,0,0,0]])
 
-eps = 0.8
-gamma = 1
+eps = 0.2
+gamma = 0.8
 iteration = 100
 
 # 0表示水，1表示食物
@@ -58,7 +58,6 @@ def train():
 
         ww = ww - cost[s][a] * c[0][0]
         wf = wf - cost[s][a] * c[1][0]
-        print(ww,wf)
         if ww <= 0 or wf <= 0 :
             die = True
 
@@ -71,29 +70,25 @@ def train():
     
     length = len(states)
     value = 0
-    print(returns)
     for i in reversed(range(length)):
         s = states[i]
         a = acts[i]
         r = rs[i]
         value += gamma*value + r
         if die == False:
-            print("Hit")
-            #exit()
             returns[(s,a)].append(value)
         else:
-            returns[(s,a)].append(0)
+            returns[(s,a)].append(value/100)
         Qtable[s,a] = np.mean(returns[(s,a)])
     print(returns)
-    print("returns字典", returns[(0,1)])
     print(Qtable)
 
 def mc_control():
     init()
     for i in range(iteration):
         train()
-    print(Qtable)
-    print("returns字典", returns[(0, 1)])
+
+    print("returns字典", returns)
 
 if __name__ == "__main__":
     mc_control()

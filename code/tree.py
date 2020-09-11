@@ -53,11 +53,30 @@ def level_order(tree):
                 stack.append(current.left)
             if current.right != None:
                 stack.append(current.right)
+
+import random
+def visit(tree):
+    if tree == None:
+        return 0
+    else:
+        temp=tree.data
+        ret = random.randint(0, 1)
+        if ret==0:
+            temp+=visit(tree.left)
+        else:
+            temp+=visit(tree.right)
+        return temp
+
 if __name__ == '__main__':
-    tree = node('A', node('B', node('D'), node('E')), node('C'))
+    tree = node(0, node(-20, node(100), node(80)), node(40))
     print (depth(tree))
     print (pre_order(tree))
     print (mid_order(tree))
     print (post_order(tree))
     print (depth_order(tree))
     print (level_order(tree))
+    try_time=1000
+    money_sum=0
+    for i in range(try_time):
+        money_sum+=visit(tree.right)
+    print(money_sum/try_time)

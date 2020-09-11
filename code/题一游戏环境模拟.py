@@ -163,7 +163,9 @@ def monte_move(cur_time,cur_money,cur_water,cur_food,cur_node,try_time):
             Money_sum+=tempmoney
             if tempmoney!=0:
                 real+=1
+        print(Money_sum)
         Money_sum/=real
+
         if Money_sum>best_score:
             best_choice=i
             best_score=Money_sum
@@ -183,7 +185,7 @@ def monte_dig(cur_time,cur_money,cur_water,cur_food,cur_node,try_time):
 
 def Try_Decide(cur_time,cur_money,cur_water,cur_food,cur_node,Log_list):
     print("I am in site "+str(cur_node))
-    Try_time=50000
+    Try_time=2000
     cur_state = Map[cur_node - 1].state
     if cur_water < 0 or cur_food < 0:
         temp=Log(cur_time,cur_node,"Dead",cur_money,cur_water,cur_food)
@@ -258,9 +260,9 @@ def Try_Decide(cur_time,cur_money,cur_water,cur_food,cur_node,Log_list):
         Log_list.append(temp)
     
         best_choice,best_score=monte_move(cur_time,cur_money,cur_water,cur_food,cur_node,Try_time)
-        temp=Log(cur_time,cur_pos,"Move"+str(best_choice),cur_money,cur_water,cur_food)
+        temp=Log(cur_time,cur_node,"Move"+str(best_choice),cur_money,cur_water,cur_food)
         Log_list.append(temp)
-        return Try_Decide(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2 ,cur_food - base_consume_food[0] * 2, best_choice)
+        return Try_Decide(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2 ,cur_food - base_consume_food[0] * 2, best_choice,Log_list)
 
 
 def RunGame():
@@ -278,8 +280,8 @@ def RunGame():
     max_money=-1
 
 
-    f=500
-    w=1000
+    f=400
+    w=800
 
     rest_money=init_money-(base_food_price*f+base_water_price*w)
     if rest_money>=0:

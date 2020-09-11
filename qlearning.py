@@ -5,9 +5,9 @@ cost = np.array([[1,16,12,6],
     [12,4,1,6],
     [6,10,6,0]])
 
-reward = np.array([[0,0,0,0],
-         [0,1000,0,0],
-         [0,0,0,0],
+reward = np.array([[0,0,0,100],
+         [0,1000,0,100],
+         [0,0,0,100],
          [0,0,0,0]])
 
 Qtable = np.array([[0,1,0,0],
@@ -15,9 +15,9 @@ Qtable = np.array([[0,1,0,0],
          [0,0,0,0],
          [0,0,0,0]])
 
-eps = 0.8
-gamma = 1
-iteration = 100
+eps = 0.5
+gamma = 0.8
+iteration = 1000
 
 # 0表示水，1表示食物
 m = np.array([3,2]) # 物品质量
@@ -98,11 +98,11 @@ def train(init_s, ww,wf, M):
         r = rs[i]
         value += gamma*value + r
         if die == False:
-            print("Hit")
+            #rint("Hit")
             #exit()
             returns[(s,a)].append(value)
         else:
-            returns[(s,a)].append(0)
+            returns[(s,a)].append(value/100)
         Qtable[s,a] = np.mean(returns[(s,a)])
     # print(returns)
     # print("returns字典", returns[(0,1)])
@@ -112,7 +112,7 @@ def mc_control(init_s,ww,wf,M):
     init()
     for i in range(iteration):
         train(init_s,ww,wf,M)
-    print(Qtable)
+    #print(Qtable)
     #print("returns字典", returns[(0, 1)])
 
 def decision():
@@ -122,7 +122,7 @@ def decision():
     M = 7400
     while(s != 3):
         mc_control(s,ww,wf,M)
-        #print(Qtable)
+        print(Qtable)
         a = np.argmax(Qtable[s,:])
  
         ww = ww - cost[s][a] * c[0][0]
@@ -130,7 +130,7 @@ def decision():
         s = a
         print(s)
         if ww <= 0 or wf <= 0 :
-            die = True
+            print("Died")
             break
     
 if __name__ == "__main__":
