@@ -1,10 +1,12 @@
 import numpy as np
 from Draw import Draw
 
-map1 = np.array([[-1,-1,6,-1],
-                [-1,1,2,5],
-                [-1,2,1,3],
-                [-1,-1,-1,0]])
+map1 = np.array([[1,7,9,8,9,11],
+                [-1,1,-1,1,-1,4],
+                [-1,-1,1,-1,1,2],
+                [-1,1,2,1,-1,3],
+                [-1,-1,1,-1,1,2],
+                [-1,-1,-1,-1,-1,0]])
 
 states_list = []
 
@@ -100,15 +102,15 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
         return 0
     
 
-    if cur_state == 3: # 终点
+    if cur_state == 5: # 终点
         # print("curwater----:", cur_water)
         # print("curfood----:",cur_food)
         states_list.append(states)
         return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
     
-    if cur_state == 2: # 村庄 买东西
+    if cur_state == 3 or cur_state == 4: # 村庄 买东西
         if(np.random.uniform(0,1) < 0.5): # 买够到终点的钱
-            (cur_time,next_water,next_food) = cost(cur_time,cur_state,3,cur_water,cur_food,states) # 计算到终点的花费
+            (cur_time,next_water,next_food) = cost(cur_time,cur_state,5,cur_water,cur_food,states) # 计算到终点的花费
             if(cur_water < cur_water - next_water):
                 cur_water =  cur_water - next_water
                 cur_money -= -next_water * base_water_price*2
@@ -144,7 +146,7 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
                     cur_money, 
                     next_water, 
                     next_food,states)
-    if cur_state == 2: # 村庄
+    if cur_state == 3 or cur_state == 4: # 村庄
         return MC(next_time, 
             next_state, 
             cur_money, 
@@ -153,7 +155,7 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
                 
 
 
-    if cur_state == 1: # 矿场
+    if cur_state == 1 or cur_state == 2: # 矿场
         if(cur_state == 1 and next_state == 1):
             return MC(next_time, 
                     next_state, 
@@ -176,11 +178,12 @@ def Game():
     sum_money = 0
     for i in range(iteration):
         states=[]
-        sum_money = MC(0,0,5675,167,349,states)
+        sum_money = MC(0,0,7400,240,240,states)
         money_list.append(sum_money)
  #   print(money_list)
   #  for i in states_list:
       #  print(i)
+    assert len(money_list) == 100000
     index = np.argmax(money_list)
     print(index)
     print(max(money_list))
