@@ -119,7 +119,8 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
     if cur_state == 3: # 买到上限
         wmax = min(cur_money / (base_food_price*2 + base_water_price*2),
                     M / (base_food_weight + base_water_weight))
-        fmax = wmax
+        wmax = 246
+        fmax = 231
         if(cur_water < wmax):
             cur_money -= (wmax-cur_water)* base_water_price*2
             cur_water = wmax
@@ -174,7 +175,7 @@ def Game():
     sum_money = 0
     for i in range(iteration):
         states=[]
-        sum_money = MC(1,0,6020,202,297,states)
+        sum_money = MC(1,0,5840,184,324,states)
         money_list.append(sum_money)
  #   print(money_list)
   #  for i in states_list:
