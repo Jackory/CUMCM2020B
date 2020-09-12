@@ -79,7 +79,7 @@ def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
 
 def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
 
-    states.append((cur_time,cur_state))
+    states.append((cur_time,cur_state,cur_money,cur_water,cur_food))
     if cur_water < 0 or cur_food < 0:
         states_list.append(states)
         return 0
@@ -178,15 +178,15 @@ def Game():
         states=[]
         sum_money = MC(0,0,7400,240,240,states)
         money_list.append(sum_money)
-    print(money_list)
-    for i in states_list:
-        print(i)
+ #   print(money_list)
+  #  for i in states_list:
+      #  print(i)
     index = np.argmax(money_list)
     print(index)
     print(max(money_list))
     print('--最优路径--', states_list[index])
-    print(states_list)
-    Draw([money_list],['测试'],range(len(money_list)),"MC")
+    #print(states_list)
+    #Draw([money_list],['测试'],range(len(money_list)),"MC")
 
 #[(0, 0), (8, 2), (10, 1), (11, 1), (12, 1), (13, 1), (14, 1), (16, 2), (20, 1), (21, 1), (22, 1), (28, 3)]
 Game()
