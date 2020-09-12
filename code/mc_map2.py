@@ -119,14 +119,17 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
     if cur_state == 3: # 买到上限
         wmax = min(cur_money / (base_food_price*2 + base_water_price*2),
                     M / (base_food_weight + base_water_weight))
-        wmax = 246
-        fmax = 231
+        # wmax = 246
+        # fmax = 231
+        wmax=238
+        fmax=226
         if(cur_water < wmax):
             cur_money -= (wmax-cur_water)* base_water_price*2
             cur_water = wmax
         if(cur_food < fmax):
             cur_money -= (fmax-cur_food) * base_food_price*2
             cur_food = fmax
+        states.append((cur_time, cur_state, cur_money, cur_water, cur_food))
 
 
 
@@ -182,7 +185,6 @@ def Game():
       #  print(i)
     #assert len(money_list) == 100000
     index = np.argmax(money_list)
-    print(index)
     print(max(money_list))
     print('--最优路径--', states_list[index])
     #print(states_list)
