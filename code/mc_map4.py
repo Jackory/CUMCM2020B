@@ -1,12 +1,10 @@
 import numpy as np
 from Draw import Draw
 
-map1 = np.array([[-1,7,-1,-1,-1,-1],
-                [-1,1,-1,1,-1,-1],
-                [-1,-1,1,-1,1,2],
-                [-1,-1,2,-1,-1,-1],
-                [-1,-1,1,-1,-1,2],
-                [-1,-1,-1,-1,-1,0]])
+map1 = np.array([[-1,5,-1,-1],
+                [-1,1,2,3],
+                [-1,2,1,3],
+                [-1,-1,-1,0]])
 
 states_list = []
 
@@ -17,19 +15,13 @@ base_water_weight=3
 base_food_price=10
 base_food_weight=2
 
-base_consume_water=[5,8,10]
-base_consume_food=[7,6,10]
+base_consume_water=[3,9,10]
+base_consume_food=[4,9,10]
 
-# 晴朗 高温 沙暴
-weather=["0","高温","高温","晴朗","沙暴","晴朗",
-         "高温","沙暴","晴朗","高温","高温",
-         "沙暴","高温","晴朗","高温","高温",
-         "高温","沙暴","沙暴","高温","高温",
-         "晴朗","晴朗","高温","晴朗","沙暴",
-         "高温","晴朗","晴朗","高温","高温"
-         ]
 
-def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
+
+
+def cost(cur_time, cur_state, next_state, cur_water,cur_food,states,weather):
     T = map1[cur_state][next_state]
     last_time = cur_time + T
     t = cur_time
@@ -38,45 +30,50 @@ def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
         cur_food = -10000000
         states.append('die')
         return (last_time, cur_water,cur_food)
-    if (cur_state == 1 and next_state == 1) or (cur_state == 2 and next_state == 2): # 挖矿
-        if(weather[t] == '晴朗'):
+    if cur_state == 1 and next_state == 1: # 挖矿
+        if(weather[t] == 0):
             cur_water -= base_consume_water[0]*3
             cur_food -= base_consume_food[0]*3
-        elif(weather[t] == '高温'):
+        elif(weather[t] == 1):
             cur_water -= base_consume_water[1]*3
             cur_food -= base_consume_food[1]*3
-        elif(weather[t] == '沙暴'):
+        elif(weather[t] == 2):
             cur_water -= base_consume_water[2]*3
             cur_food -= base_consume_food[2]*3
 
 
     elif(cur_state == next_state): #原地停留
-        if(weather[t] == '晴朗'):
+        if(weather[t] == 0):
             cur_water -= base_consume_water[0]
             cur_food -= base_consume_food[0]
-        elif(weather[t] == '高温'):
+        elif(weather[t] == 1):
             cur_water -= base_consume_water[1]
             cur_food -= base_consume_food[1]
-        elif(weather[t] == '沙暴'):
+        elif(weather[t] == 2):
             cur_water -= base_consume_water[2]
             cur_food -= base_consume_food[2]
 
     else:  # 行走
         while(t < last_time):
-            if(t >= 30):
+            if(t >30):
                 break
-            if(weather[t] == '晴朗'):
+            if(weather[t] == 0):
                 cur_water -= base_consume_water[0]*2
                 cur_food -= base_consume_food[0]*2
-            elif(weather[t] == '高温'):
-                cur_water -= base_consume_water[1]*2
-                cur_food -= base_consume_food[1]*2
-            elif(weather[t] == '沙暴'):
+            elif(weather[t] == 1): # 高温天气0.4概率停止，0.6概率前行
+                if(np.random.uniform() < 0.4):
+                    cur_water -= base_consume_water[1]
+                    cur_food -= base_consume_food[1]
+                    last_time += 1
+                else:
+                    cur_water -= base_consume_water[1]*2
+                    cur_food -= base_consume_food[1]*2
+            elif(weather[t] == 2):
                 cur_water -= base_consume_water[2]
                 cur_food -= base_consume_food[2]
                 last_time += 1
             t += 1
-        if(t>=30):
+        if(t>30):
             cur_water = -10000000
             cur_food = -10000000
             states.append('die')
@@ -84,7 +81,7 @@ def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
     return (last_time, cur_water,cur_food)
 
 
-def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
+def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states,weather):
 
     states.append((cur_time,cur_state,cur_money,cur_water,cur_food))
     if cur_water < 0 or cur_food < 0:
@@ -99,26 +96,16 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
         #print(states)
         states_list.append(states)
         return 0
-    
 
-    if cur_state == 5: # 终点
-        # print("curwater----:", cur_water)
-        # print("curfood----:",cur_food)
+    if cur_state == 3: # 终点
+
         states_list.append(states)
         return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
-    
-    if cur_state == 4: # 村庄 买东西
-        (cur_time,next_water,next_food) = cost(cur_time,cur_state,5,cur_water,cur_food,states) # 计算到终点的花费
-        if(cur_water < cur_water - next_water):
-            cur_water =  cur_water - next_water
-            cur_money -= -next_water * base_water_price*2
-        if(cur_food < cur_food - next_food):
-            cur_food = cur_food - next_food
-            cur_money -= -next_food * base_food_price*2
 
-    if cur_state == 3: # 买到上限
+    if cur_state == 2: # 商店 买到上限
         wmax = min(cur_money / (base_food_price*2 + base_water_price*2),
                     M / (base_food_weight + base_water_weight))
+        wmax = int(wmax)
         fmax = wmax
         if(cur_water < wmax):
             cur_money -= (wmax-cur_water)* base_water_price*2
@@ -133,7 +120,7 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
     while map1[cur_state][next_state] == -1:
         next_state = np.random.choice(len(map1))
 
-    (next_time,next_water,next_food) = cost(cur_time,cur_state,next_state,cur_water,cur_food,states)
+    (next_time,next_water,next_food) = cost(cur_time,cur_state,next_state,cur_water,cur_food,states,weather)
 
 
     if cur_state == 0:
@@ -141,51 +128,72 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
                     next_state, 
                     cur_money, 
                     next_water, 
-                    next_food,states)
-    if cur_state == 3 or cur_state == 4: # 村庄
+                    next_food,states,weather)
+
+    if cur_state == 2: # 村庄
         return MC(next_time, 
             next_state, 
             cur_money, 
             next_water, 
-            next_food,states)
+            next_food,states,weather)
                 
 
 
-    if cur_state == 1 or cur_state == 2: # 矿场
-        if((cur_state == 1 and next_state == 1) or (cur_state == 2 and next_state == 2)):
+    if cur_state == 1: # 矿场
+        if(cur_state == 1 and next_state == 1):
             return MC(next_time, 
                     next_state, 
                     cur_money+1000, 
                     next_water, 
-                    next_food,states)
+                    next_food,states,weather)
         else:
             return MC(next_time, 
                     next_state, 
                     cur_money, 
                     next_water, 
-                    next_food,states)
+                    next_food,states,weather)
            
 
 
 def Game():
+    #0晴朗 1高温 2沙暴
+
     print('Start')
-    iteration = 100000
-    money_list = []
+    iteration = 1000
+
+    returns = []
+    E = []
     sum_money = 0
-    for i in range(iteration):
-        states=[]
-        sum_money = MC(1,0,6020,202,297,states)
-        money_list.append(sum_money)
- #   print(money_list)
-  #  for i in states_list:
-      #  print(i)
-    #assert len(money_list) == 100000
-    index = np.argmax(money_list)
-    print(index)
-    print(max(money_list))
-    print('--最优路径--', states_list[index])
+    for k in range(1000):
+        money_list = []
+        for i in range(500):
+            states=[]
+            weather = [-1]
+            weather.extend([np.random.choice(np.arange(0,3),p=[1/3,1/2,1/6]) for _ in range(30)])
+            sum_money = MC(1,0,6400,240,240,states,weather)
+            money_list.append(sum_money)
+        returns.append(max(money_list))
+        E.append(sum(returns)/(k+1))
+    #print(E)
+
+
+#     print('Start')
+#     iteration = 10000
+#     money_list = []
+#  #  states_list = []
+#     sum_money = 0
+#     for i in range(iteration):
+#         weather = [-1]
+#         weather.extend([np.random.choice(np.arange(0,3), p=[1/3,1/2,1/6]) for _ in range(30)] )
+#         states=[]
+#         sum_money = MC(1,0,6400,240,240,states,weather)
+#         money_list.append(sum_money)
+#     index = np.argmax(money_list)
+#     print(index)
+#     print(max(money_list))
+#     print('--最优路径--', states_list[index])
     #print(states_list)
-    #Draw([money_list],['测试'],range(len(money_list)),"MC")
+    Draw([E],[''],range(len(E)),"")
 
 #[(0, 0), (8, 2), (10, 1), (11, 1), (12, 1), (13, 1), (14, 1), (16, 2), (20, 1), (21, 1), (22, 1), (28, 3)]
 Game()

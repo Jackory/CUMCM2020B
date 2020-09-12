@@ -69,16 +69,15 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
         #print(states)
         states_list.append(states)
         return 0
-    
-
+   
     if cur_state == 2: # 终点
         states_list.append(states)
         return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
     
-    if(cur_time>=7):
-        next_state = 2
-        last_time, cur_water,cur_food= walk(cur_time,cur_state,next_state,cur_water,cur_food,states)
-        return MC(last_time,next_state,cur_money,cur_water,cur_food,states)
+    # if(cur_time>=7):
+    #     next_state = 2
+    #     last_time, cur_water,cur_food= walk(cur_time,cur_state,next_state,cur_water,cur_food,states)
+    #     return MC(last_time,next_state,cur_money,cur_water,cur_food,states)
     elif(cur_state == 0):
         next_state = 1
         last_time, cur_water,cur_food= walk(cur_time,cur_state,next_state,cur_water,cur_food,states)
