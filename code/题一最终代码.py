@@ -54,7 +54,7 @@ def possess_c(cur_water,cur_food,cur_money,cur_day,log):
     #print(cur_money)
     log=log+"At Day "+str(cur_day)+": "+"Reach c water and food "+str(cur_water)+" "+str(cur_food)+"\n"
     i=0
-    if can_take==1158:
+    if cur_day>18:
         temp_water=(108/3)+cur_water
         temp_food=(38/2)+cur_food
         temp_money = cur_money - (108/3)* base_water_price * 2-(38/2)*base_food_price*2
@@ -141,13 +141,21 @@ def posseess_k(cur_water,cur_food,cur_money,cur_day,log):
 
 
 def check(i,j):
-    if 
+    if 3*i+2*j>1200 or 5*i+10*j>10000:
+        return False
+    else:
+        return True
+
 def train():
-    for init_water in range(170,190):
-        for init_food in range(320,340):
-            q,w,e=go(1,6)
-            log=""
-            possess_c(init_water-q,init_food-w,money,e,log)
+    i=0
+    for init_water in range(150,200):
+        for init_food in range(300,360):
+            i+=1
+            if check(init_water, init_food):
+                q,w,e=go(1,6)
+                log=""
+                possess_c(init_water-q,init_food-w,money,e,log)
+    print(i)
 train()
 max=-1
 max_index=0
