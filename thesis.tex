@@ -180,7 +180,12 @@ $$L(x)=\sum_{i=1}^nf(x_i)\displaystyle\frac{\Pi_{j\neq i}(x-x_j)}{\Pi_{j\neq i}(
 2,\quad\text{沙暴天气}
 \end{cases}$$表示第t天的天气情况。
 
-
+\subsection{路径方案确定}
+    分析地图和题目可知，一般情况下，玩家可考虑采取的方案有两种：
+    \begin{enumerate}
+        \item 从起点直接到达终点
+        \item 从起点经过矿山挖矿或村庄补给再到达终点
+    \end{enumerate}
 
 \subsection{地图简化}
 
@@ -211,7 +216,7 @@ $$\pi(v)=\min_{e=(u,v):u\in S}d(u)+distance(arg\min_{e=(u,v):u\in S}d(u),v)$$
 \end{equation}
 其中$i_k\leqslant3,\quad k=1,2,\dots,n$.
 
-\subsection{路径方案}
+
 %参考文献
 \begin{thebibliography}{9}%宽度9
 
