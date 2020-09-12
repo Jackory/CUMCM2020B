@@ -136,33 +136,32 @@ def MC2(cur_time, cur_state, cur_money, cur_water, cur_food,states):
 
 def Game():
     print('Start')
-    iteration = 100
+    iteration = 100000
     money_list = []
-    sum_money = 0
+    print(weather)
     for i in range(iteration):
         states=[]
         sum_money = MC(0,0,8200,120,120,states)
         money_list.append(sum_money)
 
 
-    assert len(money_list) == 100
+    #assert len(money_list) == 100
     index = np.argmax(money_list)
-    print(index)
+    print("index",index)
     print(max(money_list))
-    print(weather)
     print('去矿山--最优路径--', states_list[index])
 
     money_list.clear()
-    print(money_list)
+    states_list.clear()
+
     for i in range(iteration):
         states=[]
-        sum_money = MC2(0,0,9190,27,27,states)
+        sum_money = MC2(0,0,8380,54,54,states)
         money_list.append(sum_money)
-    assert len(money_list) == 100
+    #assert len(money_list) == 100
     index = np.argmax(money_list)
-    print(index)
+    print("index",index)
     print(max(money_list))
-    print(weather)
     print('直奔终点--最优路径--', states_list[index])
 
     #print(states_list)
