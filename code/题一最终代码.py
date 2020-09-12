@@ -55,11 +55,16 @@ def possess_c(cur_water,cur_food,cur_money,cur_day,log):
     log=log+"At Day "+str(cur_day)+": "+"Reach c water and food "+str(cur_water)+" "+str(cur_food)+"\n"
     i=0
     if cur_day>18:
-        temp_water=(108/3)+cur_water
-        temp_food=(38/2)+cur_food
-        temp_money = cur_money - (108/3)* base_water_price * 2-(38/2)*base_food_price*2
+        # 准备返程 尽可能只携带足以到达终点的物资
+        temp_water=max(36,cur_water)
+        temp_food=max(40,cur_food)
+        i=temp_water-cur_water
+        j=temp_food-cur_food
+        temp_money = cur_money - i* base_water_price * 2-j*base_food_price*2
     else:
+        # 由于起始点倾向于购买性价比更好的食物，所以这里倾向于购买水已装满背包
         i=int(can_take/base_water_weight)
+        j=0
         temp_water=cur_water+i
         temp_food=cur_food
         temp_money=cur_money-i*base_water_price*2
