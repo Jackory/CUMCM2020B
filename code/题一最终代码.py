@@ -140,14 +140,15 @@ def posseess_k(cur_water,cur_food,cur_money,cur_day,log):
         possess_z(temp_water1,temp_food1,temp_money,e,newlog)
 
 
-
-
-q,w,e=go(1,6)
-log=""
-print(e)
-#exit()
-possess_c(init_water-q,init_food-w,money,e,log)
-
+def check(i,j):
+    if 
+def train():
+    for init_water in range(170,190):
+        for init_food in range(320,340):
+            q,w,e=go(1,6)
+            log=""
+            possess_c(init_water-q,init_food-w,money,e,log)
+train()
 max=-1
 max_index=0
 for i in log_list:
