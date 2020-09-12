@@ -186,11 +186,11 @@ def Game():
   #  for i in states_list:
       #  print(i)
     index = np.argmax(money_list)
-    #print(index)
-    #print(max(money_list))
-    #print('--最优路径--', states_list[index])
+    print(index)
+    print(max(money_list))
+    print('--最优路径--', states_list[index])
     #print(states_list)
     #Draw([money_list],['测试'],range(len(money_list)),"MC")
 
 #[(0, 0), (8, 2), (10, 1), (11, 1), (12, 1), (13, 1), (14, 1), (16, 2), (20, 1), (21, 1), (22, 1), (28, 3)]
-#Game()
+Game()
