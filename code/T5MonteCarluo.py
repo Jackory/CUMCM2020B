@@ -104,11 +104,12 @@ def Game():
                 loss22+=loss2
             temp=[]
             temp.append(p1.cur_money-loss11)
-            temp.append(p2.cur_money - loss22)
+            #temp.append(p2.cur_money - loss22)
             N.append(temp)
         M.append(N)
     for i  in M:
         for j in i:
-            print(j[0],",",j[1],"     ",end="")
+            #print(j[0],",",j[1],"     ",end="")
+            print(j[0], end=" ")
         print("\n")
 Game()
