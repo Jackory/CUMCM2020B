@@ -9,7 +9,7 @@ from mc2 import count_take
 def realFuction(para):
     rest=count_restMoney(para[0],para[1])
     max_money=-1
-    for i in range(100000):
+    for i in range(1000):
         states = []
         sum_money = MC(0,0,rest,para[0],para[1],states)
         if sum_money>max_money:
@@ -24,7 +24,7 @@ def aimFunction(para):
 Need=[240,240]
 cur_best=aimFunction(Need)
 update_time=0
-for i in range(1000000):
+for i in range(10000):
     para=[np.random.uniform(low=0, high=300) for _ in range(2)]
     rest = count_restMoney(para[0], para[1])
     rest2 = count_take(para[0], para[1])

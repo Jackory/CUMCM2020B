@@ -1,12 +1,9 @@
 import numpy as np
 from Draw import Draw
 
-map1 = np.array([[1,7,9,8,9,11],
-                [-1,1,-1,1,-1,4],
-                [-1,-1,1,-1,1,2],
-                [-1,1,2,1,-1,3],
-                [-1,-1,1,-1,1,2],
-                [-1,-1,-1,-1,-1,0]])
+map1 = np.array([[1,3,3],
+                [-1,1,2],
+                [-1,-1,0]])
 
 states_list = []
 
@@ -17,23 +14,17 @@ base_water_weight=3
 base_food_price=10
 base_food_weight=2
 
-base_consume_water=[5,8,10]
-base_consume_food=[7,6,10]
+base_consume_water=[3,9,10]
+base_consume_food=[4,9,10]
 
 # 晴朗 高温 沙暴
-weather=["高温","高温","晴朗","沙暴","晴朗",
-         "高温","沙暴","晴朗","高温","高温",
-         "沙暴","高温","晴朗","高温","高温",
-         "高温","沙暴","沙暴","高温","高温",
-         "晴朗","晴朗","高温","晴朗","沙暴",
-         "高温","晴朗","晴朗","高温","高温"
-         ]
+weather=[np.random.choice(np.arange(0,2), p=[0.4,0.6]) for _ in range(10)]
 
 def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
     T = map1[cur_state][next_state]
     last_time = cur_time + T
     t = cur_time
-    if(t>=30):
+    if(t>=10):
         cur_water = -10000000
         cur_food = -10000000
         states.append('die')
@@ -63,7 +54,7 @@ def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
 
     else:  # 行走
         while(t < last_time):
-            if(t >= 30):
+            if(t >= 10):
                 break
             if(weather[t] == '晴朗'):
                 cur_water -= base_consume_water[0]*2
@@ -76,7 +67,7 @@ def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
                 cur_food -= base_consume_food[2]
                 last_time += 1
             t += 1
-        if(t>=30):
+        if(t>=10):
             cur_water = -10000000
             cur_food = -10000000
             states.append('die')
@@ -96,39 +87,17 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
         states_list.append(states)
         return 0        
 
-    if cur_time >= 30:
+    if cur_time >= 10:
         #print(states)
         states_list.append(states)
         return 0
     
 
-    if cur_state == 5: # 终点
+    if cur_state == 2: # 终点
         # print("curwater----:", cur_water)
         # print("curfood----:",cur_food)
         states_list.append(states)
         return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
-    
-    if cur_state == 3 or cur_state == 4: # 村庄 买东西
-        if(np.random.uniform(0,1) < 0.5): # 买够到终点的钱
-            (cur_time,next_water,next_food) = cost(cur_time,cur_state,5,cur_water,cur_food,states) # 计算到终点的花费
-            if(cur_water < cur_water - next_water):
-                cur_water =  cur_water - next_water
-                cur_money -= -next_water * base_water_price*2
-            if(cur_food < cur_food - next_food):
-                cur_food = cur_food - next_food
-                cur_money -= -next_food * base_food_price*2
-        else: # 买到上限
-            wmax = min(cur_money / (base_food_price*2 + base_water_price*2),
-                        M / (base_food_weight*2 + base_water_weight*2))
-            fmax = wmax
-            if(cur_water < wmax):
-                cur_money -= (wmax-cur_water)* base_water_price*2
-                cur_water = wmax
-            if(cur_food < fmax):
-                cur_money -= (fmax-cur_food) * base_food_price*2
-                cur_food = fmax
-
-
 
     next_state = np.random.choice(len(map1))
     while map1[cur_state][next_state] == -1:
@@ -146,20 +115,12 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
                     cur_money, 
                     next_water, 
                     next_food,states)
-    if cur_state == 3 or cur_state == 4: # 村庄
-        return MC(next_time, 
-            next_state, 
-            cur_money, 
-            next_water, 
-            next_food,states)
-                
 
-
-    if cur_state == 1 or cur_state == 2: # 矿场
-        if((cur_state == 1 and next_state == 1) or (cur_state == 2 and next_state == 2)):
+    if cur_state == 1: # 矿场
+        if(cur_state == 1 and next_state == 1):
             return MC(next_time, 
                     next_state, 
-                    cur_money+1000, 
+                    cur_money+200, 
                     next_water, 
                     next_food,states)
         else:
