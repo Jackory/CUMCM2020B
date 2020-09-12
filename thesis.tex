@@ -125,7 +125,7 @@
         $F_{t}$ & 第t天开始时玩家剩余的食物 & 箱 \\ 
         $Q_{t}$ & 第t天开始时玩家剩余的资金 & 元 \\
         $S_{t}$ & 第t天玩家所处的地点特征 & /\\
-        $We_t$ & 第t天的天气 & /\\
+        $Wea_t$ & 第t天的天气 & /\\
         $Q_{Mine}$ & 基础收益 & 元\\
         
         \bottomrule[1.5pt]
@@ -198,6 +198,19 @@ $$L(x)=\sum_{i=1}^nf(x_i)\displaystyle\frac{\Pi_{j\neq i}(x-x_j)}{\Pi_{j\neq i}(
 
 
 \subsection{问题一的分析与求解}
+
+我们首先引入Dijkstra算法，这是一种在有向赋权图中求两点之间最短路径的高效算法。
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{figures/Dijkstra.png}
+	\caption{Dijkstra算法示意图}
+	\label{fig:Dijkstra}
+\end{figure}
+如图\ref{fig:Dijkstra},该图中s是起点，最右侧的点是终点。$d(u)$表示从点$s$到点$u$的最短距离。之后执行如下操作：\\
+(1)初始化$S={s},d(s)=0$;\\
+(2)反复寻找未探索过的点v，使得$\min\quad\pi(v)$，将$v$添加到$S$中，并且$d(v)=\pi(v)$，其中
+$$\pi(v)=\min_{e=(u,v):u\in S}d(u)+distance(arg\min_{e=(u,v):u\in S}d(u),v)$$
+最终当终点属于$S$时，可以知道起点到终点的最短路径长度，从而问题求解。\\\\
 可以看出，问题一的核心关键在于玩家是否前往矿山挖矿、在矿山连续挖几天矿、在挖矿之后是否需要前往村庄补给物资以及是否可以在矿山和村庄之间往返。我们将问题作如下简化：
 
 选取图中起点、终点、村庄和矿山作为特殊点，利用Dijkstra算法计算出每两个特殊点之间的最短路径（即不考虑沙暴天气的影响下，所需最少的天数），如图\ref{fig:map1}：
