@@ -1,11 +1,16 @@
 # 本代码模拟了多个玩家根据给定的策略进行运动
+# Lines=[
+#     [1, 4, 3, 9, 11, 13],
+#     [1, 2, 3, 9, 11, 13],
+#     [1, 4, 3, 9, 10, 13],
+#     [1, 2, 3, 9, 10, 13],
+#     [1,5,6,13],
+#     [1,4,6,13]
+# ]
+
 Lines=[
     [1, 4, 3, 9, 11, 13],
-    [1, 2, 3, 9, 11, 13],
-    [1, 4, 3, 9, 10, 13],
-    [1, 2, 3, 9, 10, 13],
-    [1,5,6,13],
-    [1,4,6,13]
+    [1,5,6,13]
 ]
 
 Times=[
@@ -37,7 +42,7 @@ class Player:
         self.cur_pos = Lines[self.lineid][self.point]
         self.dig=False
         self.go=False
-        if self.lineid<4:
+        if self.lineid<1:
             if self.cur_time < len(Times[0]):
                 if Times[0][self.cur_time]==1:
                     self.point+=1
@@ -86,9 +91,9 @@ import random
 def Game():
     Score={}
     M=[]
-    for l in range(6):
+    for l in range(2):
         N=[]
-        for j in range(6):
+        for j in range(2):
             p1 = Player(l, 0, 100, 100, 10000)
             p2 = Player(j, 0, 100, 100, 10000)
             loss11=0
@@ -104,12 +109,18 @@ def Game():
                 loss22+=loss2
             temp=[]
             temp.append(p1.cur_money-loss11)
-            #temp.append(p2.cur_money - loss22)
+            temp.append(p2.cur_money - loss22)
             N.append(temp)
         M.append(N)
-    for i  in M:
-        for j in i:
-            #print(j[0],",",j[1],"     ",end="")
-            print(j[0], end=" ")
+    for i  in range(2):
+        for j in range(2):
+            print(M[i][j][1], end=" ")
         print("\n")
+
+    # for i  in range(5):
+    #     for j in range(6):
+    #         #print(j[0],",",j[1],"     ",end="")
+    #         M[i][j][1]-=M[i+1][j][1]
+    #         print(M[i][j][1], end=" ")
+    #     print("\n")
 Game()
