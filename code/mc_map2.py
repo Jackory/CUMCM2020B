@@ -178,7 +178,7 @@ def Game():
     sum_money = 0
     for i in range(iteration):
         states=[]
-        sum_money = MC(0,0,7400,240,240,states)
+        sum_money = MC(0,0,6400,240,240,states)
         money_list.append(sum_money)
  #   print(money_list)
   #  for i in states_list:

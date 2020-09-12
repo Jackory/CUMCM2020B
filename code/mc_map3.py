@@ -17,7 +17,7 @@ base_food_weight=2
 base_consume_water=[3,9,10]
 base_consume_food=[4,9,10]
 
-# 晴朗 高温 沙暴
+
 weather=[np.random.choice(np.arange(0,2), p=[0.4,0.6]) for _ in range(10)] # 0为晴朗，1为高温
 
 def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
