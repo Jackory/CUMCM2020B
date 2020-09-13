@@ -37,6 +37,7 @@ cost=[
     [3,9,10],
     [4,9,10]
 ]
+
 class Player:
     def __init__(self,lineid,cur_time,cur_water,cur_food,cur_money):
         self.lineid=lineid
@@ -53,7 +54,7 @@ class Player:
         self.cur_pos = Lines[self.lineid][self.point]
         self.dig=False
         self.go=False
-        if self.lineid<2:
+        if self.lineid<1:
             if self.cur_time < len(Times[0]):
                 if Times[0][self.cur_time]==1:
                     self.point+=1
@@ -159,4 +160,50 @@ def Game():
     #         M[i][j][1]-=M[i+1][j][1]
     #         print(M[i][j][1], end=" ")
     #     print("\n")
-Game()
+#Game()
+from Draw import Draw
+
+def Test():
+    Score={}
+
+
+    iter=1000
+    result=[]
+    for point in range(1000):
+        s1 = 0
+        s2 = 0
+        for i in range(iter):
+            ret=(random.randint(1, 1000))
+            if ret<point:
+                pp1=0
+            else:
+                pp1=1
+            ret=(random.randint(1, 1000))
+            if ret<point:
+                pp2=0
+            else:
+                pp2=1
+
+            p1 = Player(pp1, 0, 42, 47, 9320)
+            p2 = Player(pp2, 0, 42, 47, 9320)
+            loss11=0
+            loss22=0
+            for i in range(5):
+                p1.Policy()
+                p2.Policy()
+                pos1=p1.cur_pos
+                pos2=p2.cur_pos
+                loss1,loss2=count_loss(pos1, pos2, p1.dig, p2.dig, p1.go, p2.go, i)
+                #print("Pos1",pos1,p1.go,loss1," ","Pos2",pos2,p2.go,loss2)
+                loss11+=loss1
+                loss22+=loss2
+                #print(loss11,loss22)
+                #print("\n\n")
+            s1+=(p1.cur_money-loss11)
+            s2+=(p2.cur_money-loss22)
+
+
+        result.append(s1/iter)
+
+    Draw([result],["期望收益曲线"],range(len(result)),"")
+Test()
