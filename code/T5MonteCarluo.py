@@ -115,7 +115,7 @@ def Game():
         for j in range(2):
            N.append([0,0])
         M.append(N)
-    iter=1000000
+    iter=100000
     for i in range(iter):
         for l in range(2):
             for j in range(2):
