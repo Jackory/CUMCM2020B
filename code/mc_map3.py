@@ -184,4 +184,5 @@ def Game():
     Draw([E1,E2],['直接到终点','先到矿山再到终点'],range(len(E1)),"")
     #Draw([E1],['直接到终点'],range(len(E1)),"MC")
 
-Game()
+if __name__ == "__main__":
+    Game()

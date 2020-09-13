@@ -33,7 +33,7 @@ def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
     T = map1[cur_state][next_state]
     last_time = cur_time + T
     t = cur_time
-    if(t>=30):
+    if(t>30):
         cur_water = -10000000
         cur_food = -10000000
         states.append('die')
@@ -63,7 +63,7 @@ def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
 
     else:  # 行走
         while(t < last_time):
-            if(t >= 30):
+            if(t >30):
                 break
             if(weather[t] == '晴朗'):
                 cur_water -= base_consume_water[0]*2
@@ -76,7 +76,7 @@ def cost(cur_time, cur_state, next_state, cur_water,cur_food,states):
                 cur_food -= base_consume_food[2]
                 last_time += 1
             t += 1
-        if(t>=30):
+        if(t>30):
             cur_water = -10000000
             cur_food = -10000000
             states.append('die')
@@ -107,14 +107,24 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
         states_list.append(states)
         return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
     
-    if cur_state == 4: # 村庄 买东西
-        (cur_time,next_water,next_food) = cost(cur_time,cur_state,5,cur_water,cur_food,states) # 计算到终点的花费
-        if(cur_water < cur_water - next_water):
-            cur_water =  cur_water - next_water
-            cur_money -= -next_water * base_water_price*2
-        if(cur_food < cur_food - next_food):
-            cur_food = cur_food - next_food
-            cur_money -= -next_food * base_food_price*2
+    if cur_state == 4 : # 村庄  买东西
+        # (cur_time,next_water,next_food) = cost(cur_time,cur_state,5,cur_water,cur_food,states) # 计算到终点的花费
+        # if(cur_water < cur_water - next_water):
+        #     cur_water =  cur_water - next_water
+        #     cur_money -= -next_water * base_water_price*2
+        # if(cur_food < cur_food - next_food):
+        #     cur_food = cur_food - next_food
+        #     cur_money -= -next_food * base_food_price*2
+        wmax=238
+        fmax=226
+        if(cur_water < wmax):
+            cur_money -= (wmax-cur_water)* base_water_price*2
+            cur_water = wmax
+        if(cur_food < fmax):
+            cur_money -= (fmax-cur_food) * base_food_price*2
+            cur_food = fmax
+        states.append((cur_time, cur_state, cur_money, cur_water, cur_food))
+
 
     if cur_state == 3: # 买到上限
         wmax = min(cur_money / (base_food_price*2 + base_water_price*2),
@@ -137,6 +147,7 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
     while map1[cur_state][next_state] == -1:
         next_state = np.random.choice(len(map1))
 
+
     (next_time,next_water,next_food) = cost(cur_time,cur_state,next_state,cur_water,cur_food,states)
 
 
@@ -153,8 +164,6 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
             next_water, 
             next_food,states)
                 
-
-
     if cur_state == 1 or cur_state == 2: # 矿场
         if((cur_state == 1 and next_state == 1) or (cur_state == 2 and next_state == 2)):
             return MC(next_time, 
@@ -178,7 +187,7 @@ def Game():
     sum_money = 0
     for i in range(iteration):
         states=[]
-        sum_money = MC(1,0,5840,184,324,states)
+        sum_money = MC(1,0,6200,220,270,states)
         money_list.append(sum_money)
  #   print(money_list)
   #  for i in states_list:
