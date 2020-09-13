@@ -189,7 +189,7 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
 
 def Game():
     print('Start')
-    iteration = 100000
+    iteration = 1000000
     money_list = []
     sum_money = 0
     for i in range(iteration):
