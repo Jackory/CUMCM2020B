@@ -157,63 +157,63 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states,weather):
 
 def Game():
     #0晴朗 1高温 2沙暴
-
-    # print('Start')
-    # iteration = 1000
-
-    # returns = []
-    # E = []
-    # sum_money = 0
-    # for k in range(1000):
-    #     money_list = []
-    #     for i in range(1000):
-    #         states=[]
-    #         weather = [-1]
-    #         weather.extend([np.random.choice(np.arange(0,3),p=[1/3,1/2,1/6]) for _ in range(30)])
-    #         sum_money = MC(1,0,6400,240,240,states,weather)
-    #         money_list.append(sum_money)
-    #     returns.append(max(money_list))
-    #     E.append(sum(returns)/(k+1))
-    # print(E)
-    # E1 = []
-    # # ---------------求稳态收敛值
-    # print('Start')
-    # iter1 = 500
-    # iter2 = 500
-    # returns = []
-    # sum_money = 0
-    # for k in range(iter1):
-    #     money_list = []
-    #     for i in range(iter2):
-    #         states=[]
-    #         weather = [-1]
-    #         weather.extend([np.random.choice(np.arange(0,3),p=[1/3,1/2,1/6]) for _ in range(30)])
-    #         sum_money = MC(1,0,6400,240,240,states,weather)
-    #         money_list.append(sum_money)
-    #     returns.append(max(money_list))
-    #     E1.append(sum(returns)/(k+1))
-    
-
-
-# -----------------求单个路径 -----------------
+    # -----------------求单个路径 -----------------
     print('Start')
     iteration = 100000
     money_list = []
- #  states_list = []
+    #  states_list = []
     sum_money = 0
     weather = [-1]
-    weather.extend([np.random.choice(np.arange(0,3), p=[1/3,1/2,1/6]) for _ in range(30)] )
+    weather.extend([np.random.choice(np.arange(0, 3), p=[1 / 3, 1 / 2, 1 / 6]) for _ in range(30)])
     for i in range(iteration):
-        states=[]
-        sum_money = MC(1,0,6400,240,240,states,weather)
+        states = []
+        sum_money = MC(1, 0, 6400, 240, 240, states, weather)
         money_list.append(sum_money)
     index = np.argmax(money_list)
     print(weather)
     print(index)
     print(max(money_list))
     print('--最优路径--', states_list[index])
-    #print(states_list)
+    # print(states_list)
     #
+    print('Start')
+    iteration = 1000
+
+    returns = []
+    E = []
+    sum_money = 0
+    for k in range(1000):
+        money_list = []
+        for i in range(1000):
+            states=[]
+            weather = [-1]
+            weather.extend([np.random.choice(np.arange(0,3),p=[1/3,1/2,1/6]) for _ in range(30)])
+            sum_money = MC(1,0,6400,240,240,states,weather)
+            money_list.append(sum_money)
+        returns.append(max(money_list))
+        E.append(sum(returns)/(k+1))
+    print(E)
+    E1 = []
+    # ---------------求稳态收敛值
+    print('Start')
+    iter1 = 500
+    iter2 = 500
+    returns = []
+    sum_money = 0
+    for k in range(iter1):
+        money_list = []
+        for i in range(iter2):
+            states=[]
+            weather = [-1]
+            weather.extend([np.random.choice(np.arange(0,3),p=[1/3,1/2,1/6]) for _ in range(30)])
+            sum_money = MC(1,0,6400,240,240,states,weather)
+            money_list.append(sum_money)
+        returns.append(max(money_list))
+        E1.append(sum(returns)/(k+1))
+    
+
+
+
 
 #[(0, 0), (8, 2), (10, 1), (11, 1), (12, 1), (13, 1), (14, 1), (16, 2), (20, 1), (21, 1), (22, 1), (28, 3)]
 if __name__ == "__main__":

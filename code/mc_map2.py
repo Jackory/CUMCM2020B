@@ -104,14 +104,11 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
         return 0        
 
     if cur_time > 30:
-        #print(states)
         states_list.append(states)
         return 0
     
 
     if cur_state == 5: # 终点
-        # print("curwater----:", cur_water)
-        # print("curfood----:",cur_food)
         states_list.append(states)
         return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
     
@@ -135,9 +132,6 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
 
 
     if cur_state == 3: # 买到上限
-
-        # wmax = 246
-        # fmax = 231
         wmax=238
         fmax=226
         if(cur_water < wmax):
@@ -189,23 +183,16 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
 
 def Game():
     print('Start')
-    iteration = 100000
+    iteration = 500000
     money_list = []
-    sum_money = 0
     for i in range(iteration):
         states=[]
         sum_money = MC(1,0,5840,184,324,states)
         money_list.append(sum_money)
- #   print(money_list)
-  #  for i in states_list:
-      #  print(i)
-    #assert len(money_list) == 100000
     index = np.argmax(money_list)
     print('---index----',index)
     print(max(money_list))
     print('--最优路径--', states_list[index])
-    #print(states_list)
-    #Draw([money_list],['测试'],range(len(money_list)),"MC")
 
 #[(0, 0), (8, 2), (10, 1), (11, 1), (12, 1), (13, 1), (14, 1), (16, 2), (20, 1), (21, 1), (22, 1), (28, 3)]
 Game()
