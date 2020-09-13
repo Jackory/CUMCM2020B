@@ -88,14 +88,11 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states, map_,weather)
         return 0        
 
     if cur_time > 10:
-        #print(states)
         states_list.append(states)
         return 0
     
 
     if cur_state == 2: # 终点
-        # print("curwater----:", cur_water)
-        # print("curfood----:",cur_food)
         states_list.append(states)
         return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
     
@@ -135,38 +132,29 @@ def Game():
     money_list = []
     returns = []
     E1 = []
-    E2 = [] 
-    sum_money = 0
-    # for k in range(100):
-    #     money_list = []
-    #     for i in range(iteration):
-    #         states=[]
-    #         sum_money = MC(1,0,6020,202,297,states)
-    #         money_list.append(sum_money)
-    #   E.append(sum(returns)/(k+1))
-    #print('------先到终点-------')
-    for k in range(1000):
+    E2 = []
+    print('------先到终点-------')
+    for k in range(iteration):
         for i in range(100):
             # 0晴朗 1高温 2沙暴
             weather = [-1]
             weather.extend([np.random.choice(np.arange(0,2), p=[0.4,0.6]) for _ in range(10)] )
-            #print(weather)
             states=[]
             sum_money = MC(1,0,9190,54,54,states,map1,weather)
             money_list.append(sum_money)
         returns.append(max(money_list))
         E1.append(sum(returns)/(k+1))
 
-    #index = np.argmax(money_list)
-    #print(index)
-    #print(max(money_list))
-    #print('--最优路径--', states_list[index])
+    index = np.argmax(money_list)
+    print(index)
+    print(max(money_list))
+    print('--最优路径--', states_list[index])
 
     money_list.clear()
     states_list.clear()
     returns.clear()
-    #print('------先到矿山-----')
-    for k in range(1000):
+    print('------先到矿山-----')
+    for k in range(iteration):
         for i in range(100):
             # 0晴朗 1高温 2沙暴
             weather = [-1]
@@ -176,9 +164,9 @@ def Game():
             money_list.append(sum_money)
         returns.append(max(money_list))
         E2.append(sum(returns)/(k+1))
-    #index = np.argmax(money_list)
-    #print(max(money_list))
-    #print('--最优路径--', states_list[index])
+    index = np.argmax(money_list)
+    print(max(money_list))
+    print('--最优路径--', states_list[index])
     # 先到矿山
     #print(E)
     Draw([E1,E2],['直接到终点','先到矿山再到终点'],range(len(E1)),"")
