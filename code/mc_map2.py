@@ -1,7 +1,15 @@
 import numpy as np
 from Draw import Draw
 
-map1 = np.array([[-1,7,-1,-1,-1,-1],
+# 先去矿2
+# map1 = np.array([[-1,-1,9,-1,-1,-1],
+#                 [-1,1,-1,1,-1,-1],
+#                 [-1,-1,1,-1,1,2],
+#                 [-1,-1,2,-1,-1,-1],
+#                 [-1,-1,1,-1,-1,2],
+#                 [-1,-1,-1,-1,-1,0]])
+# 先去矿1
+map1 = np.array([[-1,7,9,8,9,-1],
                 [-1,1,-1,1,-1,-1],
                 [-1,-1,1,-1,1,2],
                 [-1,-1,2,-1,-1,-1],
@@ -115,8 +123,8 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
         # if(cur_food < cur_food - next_food):
         #     cur_food = cur_food - next_food
         #     cur_money -= -next_food * base_food_price*2
-        wmax=238
-        fmax=226
+        wmax=240
+        fmax=240
         if(cur_water < wmax):
             cur_money -= (wmax-cur_water)* base_water_price*2
             cur_water = wmax
@@ -127,8 +135,7 @@ def MC(cur_time, cur_state, cur_money, cur_water, cur_food,states):
 
 
     if cur_state == 3: # 买到上限
-        wmax = min(cur_money / (base_food_price*2 + base_water_price*2),
-                    M / (base_food_weight + base_water_weight))
+
         # wmax = 246
         # fmax = 231
         wmax=238
@@ -187,13 +194,14 @@ def Game():
     sum_money = 0
     for i in range(iteration):
         states=[]
-        sum_money = MC(1,0,6200,220,270,states)
+        sum_money = MC(1,0,5840,184,324,states)
         money_list.append(sum_money)
  #   print(money_list)
   #  for i in states_list:
       #  print(i)
     #assert len(money_list) == 100000
     index = np.argmax(money_list)
+    print('---index----',index)
     print(max(money_list))
     print('--最优路径--', states_list[index])
     #print(states_list)
