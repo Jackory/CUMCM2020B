@@ -11,8 +11,8 @@ base_food_weight=2
 base_consume_water=[5,8,10]
 base_consume_food=[7,6,10]
 # state={day ,pos,water,food}
-for i in range(180,185):
-    for j in range(325,331):
+for i in range(180,181):
+    for j in range(328,331):
         if base_water_weight*i+base_food_weight*j<=1200 and base_food_price*j+base_water_price*i<10000:
             state=(1,0,i,j)
             state_dict[state]=10000-(base_food_price*j+base_water_price*i)
@@ -87,16 +87,16 @@ def cost(cur_time, cur_state, next_state, cur_water, cur_food, states):
 success_dict={}
 #for i in range(30):
 
-for i in range(30):
+for i in range(20):
     print("Start ",i)
     new_dict = {}
     print(len(state_dict))
     for j in list(state_dict.keys()):
+        if j[0]>30:
+            continue
         if j[1]==0:
             for l in range(1,4):
-                # if l == 3:
-                #     print(1,j[1],l,j[2],j[3],[])
-                (time,cur_water,cur_food)=cost(i+1,j[1],l,j[2],j[3],[])
+                (time,cur_water,cur_food)=cost(j[0],j[1],l,j[2],j[3],[])
                 if cur_food<0 or cur_water<0:
                     continue
                 state=(time,l,cur_water,cur_food)
@@ -104,13 +104,15 @@ for i in range(30):
                     if state not in success_dict or success_dict[state]<state_dict[j]:
                         success_dict[state]=state_dict[j]
                 else:
-                    if state not in new_dict or new_dict[state]<state_dict[j]:
+                    if state not in new_dict :
                         new_dict[state]=state_dict[j]
+                    else:
+                        new_dict[state] =max(new_dict[state],state_dict[j])
         else:
             for l in range(0,4):
                 # if l == 3:
                 #     print(1,j[1],l,j[2],j[3],[])
-                (time,cur_water,cur_food)=cost(i+1,j[1],l,j[2],j[3],[])
+                (time,cur_water,cur_food)=cost(j[0],j[1],l,j[2],j[3],[])
                 if cur_food<0 or cur_water<0:
                     continue
                 state=(time,l,cur_water,cur_food)
@@ -124,20 +126,20 @@ for i in range(30):
                     if l==2:#达到商店，构造可能购买的状态转移
                         can_take=1200-3*state[2]-2*state[3]
                         can_afford=temp
-                        for init_water in range(200):
-                            for init_food in range(100):
+                        for init_water in range(250):
+                            for init_food in range(200):
                                 if init_food*2+init_water*3<=can_take and init_water*10+init_food*20<=can_afford:
-                                    temp_state=(state[0],state[1],state[2]+init_water,state[3]+init_food)
+                                    temp_state=(state[0],2,state[2]+init_water,state[3]+init_food)
                                     temp_money=can_afford-(init_water*10+init_food*20)
                                     if state not in new_dict or new_dict[state] < temp_money:
-                                        new_dict[state] = temp
-                    if state not in new_dict or new_dict[state] <  temp:
-                        new_dict[state] =  temp
+                                        new_dict[state] = temp_money
+                    # if state not in new_dict or new_dict[state] <  temp:
+                    #     new_dict[state] =  temp
     #print(len(success_dict))
 
     #print(list(state_dict.keys())[0:5])
     state_dict=new_dict
-print(len(success_dict))
-c=[ v for v in sorted(success_dict.values(),reverse=True)]
-print(c[ : 5])
+    print(len(success_dict))
+    c=[ v for v in sorted(success_dict.values(),reverse=True)]
+    print(c[ : 5])
     #print(list(state_dict.keys())[0:5])
