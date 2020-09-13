@@ -146,7 +146,7 @@ def Game():
     #   E.append(sum(returns)/(k+1))
     #print('------先到终点-------')
     for k in range(1000):
-        for i in range(10):
+        for i in range(100):
             # 0晴朗 1高温 2沙暴
             weather = [-1]
             weather.extend([np.random.choice(np.arange(0,2), p=[0.4,0.6]) for _ in range(10)] )
@@ -167,7 +167,7 @@ def Game():
     returns.clear()
     #print('------先到矿山-----')
     for k in range(1000):
-        for i in range(10):
+        for i in range(100):
             # 0晴朗 1高温 2沙暴
             weather = [-1]
             weather.extend([np.random.choice(np.arange(0,2), p=[0.4,0.6]) for _ in range(10)] )

@@ -1,17 +1,17 @@
 # 本代码模拟了多个玩家根据给定的策略进行运动
-# Lines=[
-#     [1, 4, 3, 9, 11, 13],
-#     [1, 2, 3, 9, 11, 13],
-#     [1, 4, 3, 9, 10, 13],
-#     [1, 2, 3, 9, 10, 13],
-#     [1,5,6,13],
-#     [1,4,6,13]
-# ]
-
 Lines=[
     [1, 4, 3, 9, 11, 13],
-    [1,5,6,13]
+    [1, 2, 3, 9, 11, 13],
+    [1, 4, 3, 9, 10, 13],
+    [1, 2, 3, 9, 10, 13],
+    [1,5,6,13],
+    [1,4,6,13]
 ]
+
+# Lines=[
+#     [1, 4, 3, 9, 11, 13],
+#     [1,5,6,13]
+# ]
 
 Times=[
     [ 1,1,1,0,0,0,1,1,0,0],
@@ -23,7 +23,7 @@ Mines=[0,0,0,1,1,1,0,0,0,0]
 weather=[0,1,0,0,0,0,1,1,1,1]
 
 cost=[
-    [3,4,10],
+    [3,9,10],
     [4,9,10]
 ]
 class Player:
@@ -42,7 +42,7 @@ class Player:
         self.cur_pos = Lines[self.lineid][self.point]
         self.dig=False
         self.go=False
-        if self.lineid<1:
+        if self.lineid<4:
             if self.cur_time < len(Times[0]):
                 if Times[0][self.cur_time]==1:
                     self.point+=1
@@ -91,30 +91,46 @@ import random
 def Game():
     Score={}
     M=[]
-    for l in range(2):
+    for i in range(2):
         N=[]
         for j in range(2):
-            p1 = Player(l, 0, 100, 100, 10000)
-            p2 = Player(j, 0, 100, 100, 10000)
-            loss11=0
-            loss22=0
-            for i in range(15):
-                p1.Policy()
-                p2.Policy()
-                pos1=p1.cur_pos
-                pos2=p2.cur_pos
-                loss1,loss2=count_loss(pos1, pos2, p1.dig, p2.dig, p1.go, p2.go, i)
-                #print("Pos1",pos1,p1.go,loss1," ","Pos2",pos2,p2.go,loss2)
-                loss11+=loss1
-                loss22+=loss2
-            temp=[]
-            temp.append(p1.cur_money-loss11)
-            temp.append(p2.cur_money - loss22)
-            N.append(temp)
+           N.append([0,0])
         M.append(N)
+    iter=10000
+    for i in range(iter):
+        for l in range(2):
+            for j in range(2):
+                if l==0:
+                    pp1=(random.randint(0, 3))
+                else:
+                    pp1=(random.randint(4, 5))
+                if j==0:
+                    pp2=(random.randint(0, 3))
+                else:
+                    pp2=(random.randint(4, 5))
+                p1 = Player(pp1, 0, 100, 100, 8500)
+                p2 = Player(pp2, 0, 100, 100, 8500)
+                loss11=0
+                loss22=0
+                for i in range(15):
+                    p1.Policy()
+                    p2.Policy()
+                    pos1=p1.cur_pos
+                    pos2=p2.cur_pos
+                    loss1,loss2=count_loss(pos1, pos2, p1.dig, p2.dig, p1.go, p2.go, i)
+                    #print("Pos1",pos1,p1.go,loss1," ","Pos2",pos2,p2.go,loss2)
+                    loss11+=loss1
+                    loss22+=loss2
+                #print(loss11,loss22)
+                #print("\n\n")
+                M[l][j][0]+=(p1.cur_money-loss11)
+                M[l][j][1]+=(p2.cur_money-loss22)
+
+
     for i  in range(2):
         for j in range(2):
-            print(M[i][j][1], end=" ")
+            M[i][j][0]=M[i][j][0] / iter
+            print(M[i][j][0], end=" ")
         print("\n")
 
     # for i  in range(5):
