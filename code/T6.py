@@ -1,6 +1,6 @@
 Map = []
-
-
+Set_strategy=[1,2,7,8,13,14,15,20,25]
+Set_strategy2=[1,2,7,12,13,14,19,24,25]
 class Node:
     def __init__(self, id, state, nodes):
         self.id = id
@@ -71,7 +71,7 @@ def check(i, j, can_take, canafford):
 
 
 # 这个函数作为一个机器人已经决定要从当前位置移动到下一个位置的决策过程
-def Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node):
+def Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node,meet):
     if cur_time >= 30:
         return 0
     if weather[cur_time] == "沙暴":
@@ -80,13 +80,13 @@ def Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node):
     if weather[cur_time] == "高温":
         neigh = Map[cur_node - 1].neibor
         ret = random.randint(0, len(neigh) - 1)
-        return MonteCarloRobot(cur_time + 1, cur_money, cur_water - base_consume_water[1] * 2,
-                               cur_food - base_consume_food[1] * 2, neigh[ret])
+        return MonteCarloRobot(cur_time + 1, cur_money, cur_water - base_consume_water[1] * 2 * meet,
+                               cur_food - base_consume_food[1] * 2 * meet, neigh[ret])
     if weather[cur_time] == "晴朗":
         neigh = Map[cur_node - 1].neibor
         ret = random.randint(0, len(neigh) - 1)
-        return MonteCarloRobot(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2,
-                               cur_food - base_consume_food[0] * 2, neigh[ret])
+        return MonteCarloRobot(cur_time + 1, cur_money, cur_water - base_consume_water[0] * 2* meet,
+                               cur_food - base_consume_food[0] * 2* meet, neigh[ret])
     else:
         print("Hit Error !!!!!!!!!!!!!!!!!!")
         exit()
@@ -95,7 +95,18 @@ def Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node):
 
 def MonteCarloRobot(cur_time, cur_money, cur_water, cur_food, cur_node, last_state=0):
     cur_state = Map[cur_node - 1].state
-
+    if cur_time>=len(Set_strategy):
+        Player2_pos=25
+        Player3_pos=25
+    else:
+        Player2_pos=Set_strategy[cur_time]
+        Player3_pos=Set_strategy2[cur_time]
+    meet=1
+    if Player2_pos==cur_node:
+        meet+=1
+    else:
+        if Player3_pos==cur_node:
+            meet+=1
     if cur_water < 0 or cur_food < 0:
         # print("No food or water And Dead")
         return 0
@@ -107,15 +118,15 @@ def MonteCarloRobot(cur_time, cur_money, cur_water, cur_food, cur_node, last_sta
         # return cur_money+cur_food*base_food_price/2+cur_water*base_water_price/2
         return cur_money
     if cur_state == 'p' or cur_state == 's':
-        return Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node)
+        return Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node,meet)
 
     if cur_state == 'k':
         ret = random.randint(0, 2)
         if ret == 0:  # 不挖矿 直接离开
-            return Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node)
+            return Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node,meet)
         else:
             if last_state == 1:
-                temp = MonteCarloRobot(cur_time + 1, cur_money + 1000, cur_water - base_consume_water[0] * 3,
+                temp = MonteCarloRobot(cur_time + 1, cur_money + (1000/meet), cur_water - base_consume_water[0] * 3,
                                        cur_food - base_consume_food[0] * 3, cur_node, 1)
             else:
                 temp = MonteCarloRobot(cur_time + 1, cur_money, cur_water - base_consume_water[0],
@@ -148,10 +159,10 @@ def MonteCarloRobot(cur_time, cur_money, cur_water, cur_food, cur_node, last_sta
         use_weight = (random_water * base_water_weight + random_food * base_food_weight)
 
         if use_money > cur_money or use_weight > can_take:
-            return Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node)
+            return Just_Go(cur_time, cur_money, cur_water, cur_food, cur_node,meet)
         else:
             # 带着新买的物资走
-            return Just_Go(cur_time, cur_money - use_money, cur_water + random_water, cur_food + random_food, cur_node)
+            return Just_Go(cur_time, cur_money - use_money, cur_water + random_water, cur_food + random_food, cur_node,meet)
 
 
 from Draw import Draw
@@ -292,10 +303,13 @@ def Player(cur_time , cur_money, cur_water, cur_food , cur_node):
     Log_List=[]
     old_state=(cur_time , cur_money, cur_water, cur_food , cur_node)
     while 1:
-        if old_state[4]==25:
-            break
+        # if old_state[4]==25:
+        #     break
         new_state=Try_Decide(old_state[0],old_state[1], old_state[2], old_state[3] , old_state[4],Log_List)
         print(old_state," ",new_state)
+        
+        if old_state[4]==25:
+            break
         old_state=new_state
     for i in Log_List:
         i.display()
@@ -315,8 +329,8 @@ def RunGame():
     best_decide = []
     max_money = -1
 
-    f = 300
-    w = 300
+    f = 200
+    w = 200
 
     rest_money = init_money - (base_food_price * f + base_water_price * w)
     # if rest_money >= 0:
