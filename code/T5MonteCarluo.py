@@ -160,7 +160,7 @@ def Game():
     #         M[i][j][1]-=M[i+1][j][1]
     #         print(M[i][j][1], end=" ")
     #     print("\n")
-#Game()
+Game()
 from Draw import Draw
 
 def Test():
