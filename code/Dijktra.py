@@ -1,3 +1,7 @@
+
+# 把地图使用矩阵进行建模
+# 使用图论算法Dijktra算法求解给定点的到其他点的最短距离
+
 def Test(vec,result,v0):
     visit=[]
     last_visit=0
@@ -35,6 +39,7 @@ class Node:
         for i in nodes:
             self.neibor.append(i)
 
+# 这个函数用于建立地图
 def build_map():
     fp = open("Map1.txt",'r')
     node_id=1
@@ -49,8 +54,8 @@ def build_map():
             Map.append(temp_node)
             node_id+=1
 
-
-def startwith(start: int, mgraph: list) -> list:
+# 功能算法
+def Dijktra(start: int, mgraph: list) -> list:
     passed = [start]
     nopass = [x for x in range(len(mgraph)) if x != start]
     dis = mgraph[start]
@@ -70,10 +75,10 @@ def startwith(start: int, mgraph: list) -> list:
 def run():
     n=27
     vec=[]
-
+    # 这里的n和27都是顶点的数目
     result=[]
     for i in range(27):
-        result.append(100000000)
+        result.append(100000000)# 是使用一个无穷大的值进行填充
     for i in range(27):
         temp=[]
         for j in range(27):
@@ -85,7 +90,7 @@ def run():
         for j in i.neibor:
             vec[i.id-1][j-1]=1
 
-    print(vec)
-    print(startwith(0,vec))
+    #print(vec)
+    print(Dijktra(0,vec))
 
 run()
