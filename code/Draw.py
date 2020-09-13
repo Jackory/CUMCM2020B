@@ -30,8 +30,8 @@ def Draw(Lines,Names,index,Title,Colors=None):
         font1 = {'family': 'Tahoma','size': 14}
     else:
         font1 = {'family': "FangSong", 'size': 14}
-    plt.xlabel('模拟次数/轮', font1)
-    plt.ylabel('预期资金/元', font1,rotation=90)
+    plt.xlabel('决策概率/‰', font1)
+    plt.ylabel('期望收益/元', font1,rotation=90)
     plt.legend()
 
     show_num=20
