@@ -167,8 +167,8 @@ def Game():
     index = np.argmax(money_list)
     print(max(money_list))
     print('--最优路径--', states_list[index])
-    # 先到矿山
-    #print(E)
+    
+    # 两种方案比较
     Draw([E1,E2],['直接到终点','先到矿山再到终点'],range(len(E1)),"")
     #Draw([E1],['直接到终点'],range(len(E1)),"MC")
 

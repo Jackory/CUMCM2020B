@@ -41,7 +41,7 @@ class Node:
 
 # 这个函数用于建立地图
 def build_map():
-    fp = open("Map1.txt",'r')
+    fp = open("Map1.txt",'r') # 根据所求地图修改路径
     node_id=1
     for i in fp:
         if i !=None:
