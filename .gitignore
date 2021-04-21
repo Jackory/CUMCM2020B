@@ -31,3 +31,8 @@ tmp-pdfcrop-13964.tex
 *.pdfsync
 Temp/*
 simkai.ttf
+*.tex
+.vscode/
+**/__pycache__/
+**/.ipynb_checkpoints/
+figures/
